@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this code or these results, please cite it as below."
+title: "Leakage-Audited Solar Flare Forecasting Across Solar Cycles 24 and 25: code and result tables"
+type: software
+authors:
+  - family-names: Kumar
+    given-names: Avinash
+    orcid: "https://orcid.org/0009-0008-7613-1185"
+license: MIT
+repository-code: "https://github.com/avinashchaudhary28/solar-flare-leakage-audit"
+keywords:
+  - solar flare forecasting
+  - data leakage
+  - SDO/HMI SHARP
+  - solar cycle 25

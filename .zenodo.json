@@ -1,0 +1,8 @@
+{
+  "title": "Leakage-Audited Solar Flare Forecasting Across Solar Cycles 24 and 25: code and result tables",
+  "upload_type": "software",
+  "description": "Reproducible Colab notebook, result tables and figures for M+ solar flare forecasting (24 h horizon) from SDO/HMI SHARP parameters, comparing random, active-region-grouped and forward-in-time evaluation and transfer between Solar Cycles 24 and 25.",
+  "creators": [{"name": "Kumar, Avinash", "orcid": "0009-0008-7613-1185"}],
+  "license": "MIT",
+  "keywords": ["solar flare forecasting", "data leakage", "SDO/HMI SHARP", "solar cycle 25"]
+}
