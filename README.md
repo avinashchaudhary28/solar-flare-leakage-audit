@@ -12,8 +12,8 @@ the notebook saves checkpoints to Google Drive.
 
 ## Contents
 - `solar_flare_leakage_audit.ipynb` - full pipeline
-- `results/*.csv` - result tables
-- `figures/*.png` - figures 1-4
+- `*.csv` - result tables
+- `fig1`-`fig4` PNG - figures
 
 ## Data sources
 JSOC hmi.sharp_cea_720s; SWAN-SF (Angryk et al., Harvard Dataverse); NOAA NCEI GOES-R XRS
