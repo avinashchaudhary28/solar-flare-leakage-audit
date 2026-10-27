@@ -1,0 +1,99 @@
+{
+ "run_finished_utc": "2026-10-27T12:49:26.641081+00:00",
+ "versions": {
+  "python": "3.12.15",
+  "pandas": "3.1.0",
+  "numpy": "2.5.4",
+  "scikit-learn": "1.9.1",
+  "drms": "0.9.1",
+  "xarray": "2026.9.0",
+  "netCDF4": "1.7.5.1.post1"
+ },
+ "scale_factor": 0.7,
+ "M_true": 1e-05,
+ "M_scaled_equivalent": 1.4285714285714287e-05,
+ "flux_source": {},
+ "ratio_used_v2a": {
+  "g16_over_swan": 1.4285714285714286
+ },
+ "errors": 6,
+ "inputs": {
+  "swan/addenda.tar.gz": {
+   "bytes": 34042374,
+   "md5": "82c4ab7d6593cb34dfb4d9c216767eae"
+  },
+  "pinn_data/sharp_2010_2018_1h.csv.gz": {
+   "bytes": 53760263,
+   "md5": "d939b79cc42453d26dcb82d16fc20669"
+  },
+  "pinn_data/sharp_2019_2024_1h.csv.gz": {
+   "bytes": 36783515,
+   "md5": "29190875f4ac190721b373b15115c3c4"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2010_v1-0-1.nc": {
+   "bytes": 2298466,
+   "md5": "352e921b203c9dfe69743de571caf88b"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2011_v1-0-1.nc": {
+   "bytes": 3468586,
+   "md5": "329591fb3745702541df72782c5e77f8"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2012_v1-0-1.nc": {
+   "bytes": 3365728,
+   "md5": "c97fc829a3920a03e0b95c686539c175"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2013_v1-0-1.nc": {
+   "bytes": 3298281,
+   "md5": "3dfd35d84b37dc131830006fdac1790c"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2014_v1-0-1.nc": {
+   "bytes": 3703754,
+   "md5": "aa512c49b37b6b7aef9c6e6631cfb77a"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2015_v1-0-1.nc": {
+   "bytes": 3421058,
+   "md5": "9d7cd1ec17cefc792ff648f37d074841"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2016_v1-0-1.nc": {
+   "bytes": 2907290,
+   "md5": "b537eae3a2ad34723b8e0d22ce383cfc"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2017_v1-0-1.nc": {
+   "bytes": 2352421,
+   "md5": "54ff5102d621e2019a8bef34f2af50f5"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2018_v1-0-1.nc": {
+   "bytes": 699394,
+   "md5": "5aa400a661b3bd067d1b9fc2dc2a7331"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2019_v1-0-1.nc": {
+   "bytes": 534463,
+   "md5": "f34514b1f13783a82772e209b718708d"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2020_v1-0-1.nc": {
+   "bytes": 697346,
+   "md5": "e8fd3ada206efd318fc945fbcf4a36b1"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2021_v1-0-1.nc": {
+   "bytes": 2296418,
+   "md5": "8bebd853b0cf1bc477726b7de3963c32"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2022_v1-0-1.nc": {
+   "bytes": 3419961,
+   "md5": "59aa94256f4cd1679c52686a9c560f95"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2023_v1-0-1.nc": {
+   "bytes": 3428652,
+   "md5": "755c8716baadcee53bd59308d47d149d"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2024_v1-0-1.nc": {
+   "bytes": 4023738,
+   "md5": "a659f983c254ca5c39ec145d66a7d2b1"
+  },
+  "flrpt/sci_xrsf-l2-flrpt_geo_y2025_v1-0-1.nc": {
+   "bytes": 3366289,
+   "md5": "87e096db4e5a9cd6b9107027fb574164"
+  }
+ },
+ "hek_cache_files": 360
+}
