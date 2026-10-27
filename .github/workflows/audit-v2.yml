@@ -1,0 +1,80 @@
+name: Audit v2 (Phase 2 data audit)
+
+# Runs the Phase 2 audit notebook on GitHub's servers and commits the result
+# tables back to this branch under results/audit_v2/. Does not touch main or v1.0.0.
+on:
+  push:
+    branches: [audit-v2]
+    paths: ["audit/**", ".github/workflows/audit-v2.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: audit-v2
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      AUDIT_WORK: ${{ github.workspace }}/work
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install packages
+        run: |
+          pip install -q "pandas>=2.2" "numpy>=1.26" "scikit-learn>=1.5" requests drms netCDF4 xarray pyarrow \
+                         nbconvert nbclient ipykernel
+          pip freeze > pip-freeze.txt
+
+      - name: Restore downloaded inputs (cache)
+        uses: actions/cache@v4
+        with:
+          path: |
+            work/swan
+            work/pinn_data
+            work/hek_cache
+            work/flrpt
+            work/flsum_g16.nc
+          key: audit-v2-inputs-${{ hashFiles('audit/solar_flare_audit_v2.ipynb') }}
+          restore-keys: audit-v2-inputs-
+
+      - name: Run audit notebook
+        run: |
+          mkdir -p work
+          jupyter nbconvert --to notebook --execute --allow-errors \
+            --ExecutePreprocessor.timeout=-1 \
+            --output executed.ipynb audit/solar_flare_audit_v2.ipynb
+
+      - name: Collect results
+        if: always()
+        run: |
+          mkdir -p results/audit_v2
+          cp -r work/audit_v2_out/. results/audit_v2/ 2>/dev/null || true
+          cp audit/executed.ipynb results/audit_v2/executed_notebook.ipynb 2>/dev/null || true
+          cp pip-freeze.txt results/audit_v2/ 2>/dev/null || true
+          ls -la results/audit_v2
+
+      - name: Upload results (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit_v2_results
+          path: results/audit_v2
+
+      - name: Commit results to this branch
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/audit_v2
+          git diff --cached --quiet && echo "no result changes" && exit 0
+          git commit -m "Audit v2 results (run ${{ github.run_number }})"
+          git push
