@@ -1,12 +1,11 @@
 name: Collect Phase 3 results from a run
 
 # Manual: copies the phase3_* artifacts of an earlier run into results/phase3/ and commits them.
+# Trigger: put the run id in phase3/collect_run_id.txt and push to audit-v2.
 on:
-  workflow_dispatch:
-    inputs:
-      run_id:
-        description: "Run id of a Phase 3 run"
-        required: true
+  push:
+    branches: [audit-v2]
+    paths: ["phase3/collect_run_id.txt"]
 
 permissions:
   contents: write
@@ -17,11 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - id: rid
+        run: echo "run_id=$(tr -dc 0-9 < phase3/collect_run_id.txt)" >> "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@v4
         with:
           pattern: "phase3_*"
           path: dl
-          run-id: ${{ inputs.run_id }}
+          run-id: ${{ steps.rid.outputs.run_id }}
           github-token: ${{ github.token }}
       - name: Commit results
         run: |
@@ -35,5 +36,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add results/phase3
           git diff --cached --quiet && echo "no changes" && exit 0
-          git commit -m "Phase 3 results (collected from run ${{ inputs.run_id }})"
+          git commit -m "Phase 3 results (collected from run ${{ steps.rid.outputs.run_id }})"
           git push
