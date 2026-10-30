@@ -1,5 +1,5 @@
 {
- "run_finished_utc": "2026-10-27T12:49:26.641081+00:00",
+ "run_finished_utc": "2026-10-30T02:19:43.103106+00:00",
  "versions": {
   "python": "3.12.15",
   "pandas": "3.1.0",
@@ -12,11 +12,37 @@
  "scale_factor": 0.7,
  "M_true": 1e-05,
  "M_scaled_equivalent": 1.4285714285714287e-05,
- "flux_source": {},
+ "flux_source": {
+  "flsum_g16.nc": "xrsb_flux"
+ },
  "ratio_used_v2a": {
   "g16_over_swan": 1.4285714285714286
  },
- "errors": 6,
+ "g16_flsum_file": [
+  "sci_xrsf-l2-flsum_g16_s20170209_e20250407_v2-2-2.nc"
+ ],
+ "flrpt_variables": [
+  "start_time",
+  "end_time",
+  "flare_id",
+  "xrsb_irrad",
+  "flare_class",
+  "xrsb_irrad_source",
+  "background_irrad",
+  "integrated_irrad_peak",
+  "integrated_irrad_end",
+  "flare_loc_swpc_hgs",
+  "flare_loc_swpc_source",
+  "flare_loc_xrs_hgs",
+  "flare_loc_xrs_hpc",
+  "flare_loc_xrs_source",
+  "sequential_flare_num",
+  "event_id_swpc",
+  "peak_saturated",
+  "active_region",
+  "time"
+ ],
+ "errors": 2,
  "inputs": {
   "swan/addenda.tar.gz": {
    "bytes": 34042374,
@@ -29,6 +55,10 @@
   "pinn_data/sharp_2019_2024_1h.csv.gz": {
    "bytes": 36783515,
    "md5": "29190875f4ac190721b373b15115c3c4"
+  },
+  "flsum_g16.nc": {
+   "bytes": 6360319,
+   "md5": "cb468b2f9d1f07d4cf1dc147fe705f74"
   },
   "flrpt/sci_xrsf-l2-flrpt_geo_y2010_v1-0-1.nc": {
    "bytes": 2298466,

@@ -1,105 +1,53 @@
-## download GOES-16 flare summary
-Traceback (most recent call last):
-  File "/tmp/ipykernel_2440/2526661432.py", line 26, in run_audit
-    fn(); print(f"[{name}] done in {round(time.time()-t0)} s", flush=True)
-    ^^^^
-  File "/tmp/ipykernel_2440/3273472308.py", line 30, in dl_g16
-    get(GOES + "goes16/l2/data/xrsf-l2-flsum_science/sci_xrsf-l2-flsum_g16_s20170209_e20250406_v2-2-1.nc", "flsum_g16.nc")
-  File "/tmp/ipykernel_2440/2526661432.py", line 41, in get
-    r.raise_for_status()
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/requests/models.py", line 1167, in raise_for_status
-    raise HTTPError(http_error_msg, response=self)
-requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/xrsf-l2-flsum_science/sci_xrsf-l2-flsum_g16_s20170209_e20250406_v2-2-1.nc
-
-## load catalogues
-Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/xarray/backends/file_manager.py", line 265, in _acquire_with_cache_info
-    file = self._cache[self._key]
-           ~~~~~~~~~~~^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/xarray/backends/lru_cache.py", line 56, in __getitem__
-    value = self._cache[key]
-            ~~~~~~~~~~~^^^^^
-KeyError: [<class 'netCDF4._netCDF4.Dataset'>, ('/home/runner/work/solar-flare-leakage-audit/solar-flare-leakage-audit/work/flsum_g16.nc',), 'r', (('clobber', True), ('diskless', False), ('format', 'NETCDF4'), ('persist', False)), 'f4aec3af-419f-4812-9c01-908f2c796abd']
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/tmp/ipykernel_2440/2526661432.py", line 26, in run_audit
-    fn(); print(f"[{name}] done in {round(time.time()-t0)} s", flush=True)
-    ^^^^
-  File "/tmp/ipykernel_2440/2090825810.py", line 37, in load_catalogues
-    FL["g16"] = load_flsum("flsum_g16.nc")
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/ipykernel_2440/2090825810.py", line 25, in load_flsum
-    d = xr.open_dataset(path).to_dataframe().reset_index()
-        ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/xarray/backends/api.py", line 619, in open_dataset
-    backend_ds = backend.open_dataset(
-                 ^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/xarray/backends/netCDF4_.py", line 797, in open_dataset
-    store = NetCDF4DataStore.open(
-            ^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/xarray/backends/netCDF4_.py", line 555, in open
-    return cls(manager, group=group, mode=mode, lock=lock, autoclose=autoclose)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/xarray/backends/netCDF4_.py", line 454, in __init__
-    with manager.acquire_context():
-         ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/contextlib.py", line 137, in __enter__
-    return next(self.gen)
-           ^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/xarray/backends/file_manager.py", line 235, in acquire_context
-    file, cached = self._acquire_with_cache_info(needs_lock)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/xarray/backends/file_manager.py", line 278, in _acquire_with_cache_info
-    file = self._opener(*self._args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "src/netCDF4/_netCDF4.pyx", line 2527, in netCDF4._netCDF4.Dataset.__init__
-  File "src/netCDF4/_netCDF4.pyx", line 2164, in netCDF4._netCDF4._ensure_nc_success
-FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/solar-flare-leakage-audit/solar-flare-leakage-audit/work/flsum_g16.nc'
-
 ## Audit 1 GOES scaling
 Traceback (most recent call last):
-  File "/tmp/ipykernel_2440/2526661432.py", line 26, in run_audit
+  File "/tmp/ipykernel_2380/2526661432.py", line 26, in run_audit
     fn(); print(f"[{name}] done in {round(time.time()-t0)} s", flush=True)
     ^^^^
-  File "/tmp/ipykernel_2440/2079520713.py", line 19, in audit_goes_scaling
+  File "/tmp/ipykernel_2380/2079520713.py", line 19, in audit_goes_scaling
     compare("G16 science / SWAN-SF", s, FL["g16"], "2017-02-09", "2018-12-31", "~1.43 if SWAN-SF is 0.7-scaled")
-                                        ~~^^^^^^^
-KeyError: 'g16'
+  File "/tmp/ipykernel_2380/2079520713.py", line 13, in compare
+    m = nearest_pairs(a, b, 5)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ipykernel_2380/2079520713.py", line 5, in nearest_pairs
+    m = pd.merge_asof(A, B, left_on=on_a + "_a", right_on=on_b + "_b", direction="nearest", tolerance=pd.Timedelta(f"{tol_min}min"))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 913, in merge_asof
+    op = _AsOfMerge(
+         ^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 2460, in __init__
+    _OrderedMerge.__init__(
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 2372, in __init__
+    _MergeOperation.__init__(
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 1022, in __init__
+    self._maybe_require_matching_dtypes(self.left_join_keys, self.right_join_keys)
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 2585, in _maybe_require_matching_dtypes
+    _check_dtype_match(lk, rk, i)
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 2581, in _check_dtype_match
+    raise MergeError(msg)
+pandas.errors.MergeError: incompatible merge keys [0] dtype('<M8[us]') and dtype('<M8[ns]'), must be the same type
 
 ## Audit 3 HEK matching
 Traceback (most recent call last):
-  File "/tmp/ipykernel_2440/2526661432.py", line 26, in run_audit
+  File "/tmp/ipykernel_2380/2526661432.py", line 26, in run_audit
     fn(); print(f"[{name}] done in {round(time.time()-t0)} s", flush=True)
     ^^^^
-  File "/tmp/ipykernel_2440/1288095453.py", line 18, in audit_hek
-    sets = [("C25 G16 M+ (true flux)", FL["g16"][(FL["g16"].time >= "2019-01-01") & (FL["g16"].flux >= M_TRUE)])]
-                                       ~~^^^^^^^
-KeyError: 'g16'
-
-## Audit 4 HARP vs NOAA
-Traceback (most recent call last):
-  File "/tmp/ipykernel_2440/2526661432.py", line 26, in run_audit
-    fn(); print(f"[{name}] done in {round(time.time()-t0)} s", flush=True)
-    ^^^^
-  File "/tmp/ipykernel_2440/3028242549.py", line 29, in audit_harp_noaa
-    test_positives_affected=int(te[te.harp.isin(shared)].y_v1.sum())))
-                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/generic.py", line 6434, in __getattr__
-    return object.__getattribute__(self, name)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'DataFrame' object has no attribute 'y_v1'
-
-## Audit 6 split dates
-Traceback (most recent call last):
-  File "/tmp/ipykernel_2440/2526661432.py", line 26, in run_audit
-    fn(); print(f"[{name}] done in {round(time.time()-t0)} s", flush=True)
-    ^^^^
-  File "/tmp/ipykernel_2440/3028242549.py", line 57, in audit_dates
-    pos_rate_v1=round(d.y_v1.mean(), 4)))
-                      ^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/generic.py", line 6434, in __getattr__
-    return object.__getattribute__(self, name)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'DataFrame' object has no attribute 'y_v1'
+  File "/tmp/ipykernel_2380/1288095453.py", line 37, in audit_hek
+    m = nearest_pairs(f[["time", "ar"]], FL["swan"][FL["swan"].flux >= 5e-6][["time", "ar"]], 5)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ipykernel_2380/2079520713.py", line 5, in nearest_pairs
+    m = pd.merge_asof(A, B, left_on=on_a + "_a", right_on=on_b + "_b", direction="nearest", tolerance=pd.Timedelta(f"{tol_min}min"))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 913, in merge_asof
+    op = _AsOfMerge(
+         ^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 2460, in __init__
+    _OrderedMerge.__init__(
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 2372, in __init__
+    _MergeOperation.__init__(
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 1022, in __init__
+    self._maybe_require_matching_dtypes(self.left_join_keys, self.right_join_keys)
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 2585, in _maybe_require_matching_dtypes
+    _check_dtype_match(lk, rk, i)
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/reshape/merge.py", line 2581, in _check_dtype_match
+    raise MergeError(msg)
+pandas.errors.MergeError: incompatible merge keys [0] dtype('<M8[ns]') and dtype('<M8[us]'), must be the same type
