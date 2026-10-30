@@ -1,0 +1,9 @@
+flares,window_min,hek_classes,n_flares,with_ar_v1,with_ar_v2,ambiguous_multi_ar,v1_v2_disagree
+C25 G16 M+ (true flux),5,C/M/X,1634,1524,1524,109,56
+C25 G16 M+ (true flux),10,M/X only (v1),1634,1528,1528,123,66
+C25 G16 M+ (true flux),10,C/M/X,1634,1531,1531,138,73
+C25 G16 M+ (true flux),20,C/M/X,1634,1542,1542,231,109
+C24 Flare Report M+ (true flux),5,C/M/X,1266,1148,1148,85,42
+C24 Flare Report M+ (true flux),10,M/X only (v1),1266,764,764,53,26
+C24 Flare Report M+ (true flux),10,C/M/X,1266,1163,1163,91,43
+C24 Flare Report M+ (true flux),20,C/M/X,1266,1198,1198,120,58

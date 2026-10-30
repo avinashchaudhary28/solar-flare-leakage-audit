@@ -1,5 +1,8 @@
 {
  "label": "v1",
+ "run": "v1",
+ "c25_table": "c25_samples_v2.pkl",
+ "c25_last_window": "2024-12-30 00:00:00",
  "n_boot": 1000,
  "selected_hyperparameters": {
   "LR": {
@@ -20,7 +23,7 @@
    "alpha": 1.0
   }
  },
- "minutes": 25.6,
+ "minutes": 25.3,
  "versions": {
   "python": "3.12.15",
   "sklearn": "1.9.1",
