@@ -5,7 +5,7 @@ name: Audit v2 (Phase 2 data audit)
 on:
   push:
     branches: [audit-v2]
-    paths: [".github/workflows/audit-v2.yml"]
+    paths: ["audit/run-audit-only"]
   workflow_dispatch:
 
 permissions:
@@ -77,4 +77,5 @@ jobs:
           git add results/audit_v2
           git diff --cached --quiet && echo "no result changes" && exit 0
           git commit -m "Audit v2 results (run ${{ github.run_number }})"
-          for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 10; done
+          ok=0; for i in 1 2 3; do if git pull --rebase -q && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "push failed"; exit 1; }

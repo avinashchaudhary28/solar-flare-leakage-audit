@@ -6,7 +6,7 @@ name: Phase 3 (rerun on corrected labels)
 on:
   push:
     branches: [audit-v2]
-    paths: ["phase3/**", "audit/**", ".github/workflows/phase3.yml"]
+    paths: ["phase3/**", "audit/**"]
   workflow_dispatch:
 
 permissions:
@@ -96,14 +96,15 @@ jobs:
       - uses: actions/download-artifact@v4
         with: {pattern: "phase3_*", path: dl}
       - uses: actions/download-artifact@v4
-        with: {name: audit_out, path: results/audit_v2}
+        with: {name: audit_out, path: results/phase3/audit_tables}
       - name: Commit results
         run: |
           mkdir -p results/phase3
-          for d in dl/phase3_*; do [ -d "$d" ] && rm -rf "results/phase3/${d#dl/phase3_}" && cp -r "$d" "results/phase3/${d#dl/phase3_}"; done
+          for d in dl/phase3_*; do if [ -d "$d" ]; then n="${d#dl/phase3_}"; rm -rf "results/phase3/$n"; cp -r "$d" "results/phase3/$n"; fi; done
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add results
+          git add results/phase3
           git diff --cached --quiet && echo "no changes" && exit 0
           git commit -m "Phase 3 results (run ${{ github.run_number }})"
-          for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 10; done
+          ok=0; for i in 1 2 3; do if git pull --rebase -q && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "push failed"; exit 1; }
