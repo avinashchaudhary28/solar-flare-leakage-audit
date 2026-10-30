@@ -1,0 +1,30 @@
+{
+ "label": "v2c",
+ "n_boot": 1000,
+ "selected_hyperparameters": {
+  "LR": {
+   "C": 0.001
+  },
+  "HGB": {
+   "learning_rate": 0.06,
+   "max_iter": 100,
+   "max_leaf_nodes": 8,
+   "min_samples_leaf": 200,
+   "l2_regularization": 1
+  },
+  "MLP": {
+   "hidden_layer_sizes": [
+    64,
+    32
+   ],
+   "alpha": 1.0
+  }
+ },
+ "minutes": 26.5,
+ "versions": {
+  "python": "3.12.15",
+  "sklearn": "1.9.1",
+  "pandas": "3.1.0",
+  "numpy": "2.5.4"
+ }
+}
