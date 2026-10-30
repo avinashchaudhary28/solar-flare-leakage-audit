@@ -103,10 +103,12 @@ jobs:
       - uses: actions/download-artifact@v4
         with: {pattern: "phase3_*", path: dl}
       - uses: actions/download-artifact@v4
-        with: {name: audit_out, path: results/phase3/audit_tables}
+        with: {name: audit_out, path: dl_audit}
       - name: Commit results
         run: |
+          git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}"
           mkdir -p results/phase3
+          rm -rf results/phase3/audit_tables; mkdir -p results/phase3/audit_tables; cp -r dl_audit/. results/phase3/audit_tables/
           for d in dl/phase3_*; do if [ -d "$d" ]; then n="${d#dl/phase3_}"; rm -rf "results/phase3/$n"; cp -r "$d" "results/phase3/$n"; fi; done
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
