@@ -1,0 +1,109 @@
+name: Phase 3 (rerun on corrected labels)
+
+# 1) rebuild the window tables with all label variants (audit notebook, cached inputs)
+# 2) rerun every experiment once per label, in parallel
+# 3) commit the tables and figures to results/phase3/<label>/ on this branch
+on:
+  push:
+    branches: [audit-v2]
+    paths: ["phase3/**", "audit/**", ".github/workflows/phase3.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: audit-v2-phase3
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      AUDIT_WORK: ${{ github.workspace }}/work
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -q "pandas>=2.2" "numpy>=1.26" "scikit-learn>=1.5" requests drms netCDF4 xarray pyarrow nbconvert nbclient ipykernel
+      - uses: actions/cache@v4
+        with:
+          path: |
+            work/swan
+            work/pinn_data
+            work/hek_cache
+            work/flrpt
+            work/flsum_g16.nc
+          key: audit-v2-inputs-${{ hashFiles('audit/solar_flare_audit_v2.ipynb') }}
+          restore-keys: audit-v2-inputs-
+      - name: Build window tables (audit notebook)
+        run: |
+          mkdir -p work
+          jupyter nbconvert --to notebook --execute --allow-errors --ExecutePreprocessor.timeout=-1 \
+            --output executed.ipynb audit/solar_flare_audit_v2.ipynb
+          ls -la work/*.pkl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: samples
+          path: |
+            work/c24_samples_v2.pkl
+            work/c25_samples_v2.pkl
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: audit_out
+          path: work/audit_v2_out
+
+  run:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix:
+        label: [v1, v2c]
+    env:
+      AUDIT_WORK: ${{ github.workspace }}/work
+      LABEL: ${{ matrix.label }}
+      PUBLISHED_DIR: ${{ github.workspace }}
+      NBOOT: "1000"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -q "pandas>=2.2" "numpy>=1.26" "scikit-learn>=1.5" matplotlib pyarrow nbconvert nbclient ipykernel && pip freeze > pip-freeze.txt
+      - uses: actions/download-artifact@v4
+        with: {name: samples, path: work}
+      - name: Run Phase 3 notebook
+        run: |
+          jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=-1 \
+            --output executed_${LABEL}.ipynb phase3/solar_flare_phase3.ipynb
+          cp phase3/executed_${LABEL}.ipynb work/phase3_out/${LABEL}/executed_notebook.ipynb
+          cp pip-freeze.txt work/phase3_out/${LABEL}/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase3_${{ matrix.label }}
+          path: work/phase3_out/${{ matrix.label }}
+
+  commit:
+    needs: [build, run]
+    if: always() && needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {pattern: "phase3_*", path: dl}
+      - uses: actions/download-artifact@v4
+        with: {name: audit_out, path: results/audit_v2}
+      - name: Commit results
+        run: |
+          mkdir -p results/phase3
+          for d in dl/phase3_*; do [ -d "$d" ] && rm -rf "results/phase3/${d#dl/phase3_}" && cp -r "$d" "results/phase3/${d#dl/phase3_}"; done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "Phase 3 results (run ${{ github.run_number }})"
+          for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 10; done
