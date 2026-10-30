@@ -1,5 +1,5 @@
 {
- "run_finished_utc": "2026-10-30T02:19:43.103106+00:00",
+ "run_finished_utc": "2026-10-30T02:22:19.372868+00:00",
  "versions": {
   "python": "3.12.15",
   "pandas": "3.1.0",
@@ -16,11 +16,9 @@
   "flsum_g16.nc": "xrsb_flux"
  },
  "ratio_used_v2a": {
-  "g16_over_swan": 1.4285714285714286
+  "g16_over_swan": 1.569
  },
- "g16_flsum_file": [
-  "sci_xrsf-l2-flsum_g16_s20170209_e20250407_v2-2-2.nc"
- ],
+ "g16_flsum_file": [],
  "flrpt_variables": [
   "start_time",
   "end_time",
@@ -42,7 +40,7 @@
   "active_region",
   "time"
  ],
- "errors": 2,
+ "errors": 0,
  "inputs": {
   "swan/addenda.tar.gz": {
    "bytes": 34042374,
