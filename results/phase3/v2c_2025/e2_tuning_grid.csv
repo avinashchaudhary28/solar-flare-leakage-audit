@@ -3,7 +3,7 @@ LR,"{""C"": 0.0003}",0.9208,False,False
 LR,"{""C"": 0.001}",0.9212,True,False
 LR,"{""C"": 0.003}",0.9209,False,False
 LR,"{""C"": 0.03}",0.9188,False,False
-LR,"{""C"": 0.3}",0.9167,False,False
+LR,"{""C"": 0.3}",0.9168,False,False
 HGB,"{""learning_rate"": 0.06, ""max_iter"": 100, ""max_leaf_nodes"": 8, ""min_samples_leaf"": 200, ""l2_regularization"": 1}",0.9184,True,True
 HGB,"{""learning_rate"": 0.06, ""max_iter"": 300, ""max_leaf_nodes"": 8, ""min_samples_leaf"": 200, ""l2_regularization"": 10}",0.9123,False,False
 HGB,"{""learning_rate"": 0.06, ""max_iter"": 100, ""max_leaf_nodes"": 31, ""min_samples_leaf"": 500, ""l2_regularization"": 10}",0.9154,False,False
@@ -13,7 +13,7 @@ HGB,"{""learning_rate"": 0.06, ""max_iter"": 150, ""max_leaf_nodes"": 15, ""min_
 HGB,"{""learning_rate"": 0.06, ""max_iter"": 300, ""max_leaf_nodes"": 8, ""min_samples_leaf"": 500, ""l2_regularization"": 1}",0.9126,False,False
 HGB,"{""learning_rate"": 0.06, ""max_iter"": 100, ""max_leaf_nodes"": 31, ""min_samples_leaf"": 50, ""l2_regularization"": 1}",0.9101,False,False
 MLP,"{""hidden_layer_sizes"": [32], ""alpha"": 0.001}",0.9021,False,False
-MLP,"{""hidden_layer_sizes"": [32], ""alpha"": 0.1}",0.9059,False,False
+MLP,"{""hidden_layer_sizes"": [32], ""alpha"": 0.1}",0.9038,False,False
 MLP,"{""hidden_layer_sizes"": [32], ""alpha"": 1.0}",0.9161,False,False
 MLP,"{""hidden_layer_sizes"": [32], ""alpha"": 10.0}",0.916,False,False
 MLP,"{""hidden_layer_sizes"": [64, 32], ""alpha"": 1.0}",0.9193,True,True
