@@ -43,12 +43,14 @@ jobs:
           jupyter nbconvert --to notebook --execute --allow-errors --ExecutePreprocessor.timeout=-1 \
             --output executed.ipynb audit/solar_flare_audit_v2.ipynb
           ls -la work/*.pkl
+          test -f work/c25ext_samples_v2.pkl || { echo "2025 table missing - see work/audit_v2_out/errors.txt"; cat work/audit_v2_out/errors.txt; exit 1; }
       - uses: actions/upload-artifact@v4
         with:
           name: samples
           path: |
             work/c24_samples_v2.pkl
             work/c25_samples_v2.pkl
+            work/c25ext_samples_v2.pkl
           retention-days: 7
       - uses: actions/upload-artifact@v4
         with:
@@ -62,10 +64,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        label: [v1, v2c]
+        include:
+          - {name: v1, label: v1, table: c25_samples_v2.pkl}
+          - {name: v2c, label: v2c, table: c25_samples_v2.pkl}
+          - {name: v2c_2025, label: v2c, table: c25ext_samples_v2.pkl}
     env:
       AUDIT_WORK: ${{ github.workspace }}/work
       LABEL: ${{ matrix.label }}
+      C25_TABLE: ${{ matrix.table }}
+      RUN_NAME: ${{ matrix.name }}
       PUBLISHED_DIR: ${{ github.workspace }}
       NBOOT: "1000"
     steps:
@@ -78,14 +85,14 @@ jobs:
       - name: Run Phase 3 notebook
         run: |
           jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=-1 \
-            --output executed_${LABEL}.ipynb phase3/solar_flare_phase3.ipynb
-          cp phase3/executed_${LABEL}.ipynb work/phase3_out/${LABEL}/executed_notebook.ipynb
-          cp pip-freeze.txt work/phase3_out/${LABEL}/
+            --output executed_${RUN_NAME}.ipynb phase3/solar_flare_phase3.ipynb
+          cp phase3/executed_${RUN_NAME}.ipynb work/phase3_out/${RUN_NAME}/executed_notebook.ipynb
+          cp pip-freeze.txt work/phase3_out/${RUN_NAME}/
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: phase3_${{ matrix.label }}
-          path: work/phase3_out/${{ matrix.label }}
+          name: phase3_${{ matrix.name }}
+          path: work/phase3_out/${{ matrix.name }}
 
   commit:
     needs: [build, run]
