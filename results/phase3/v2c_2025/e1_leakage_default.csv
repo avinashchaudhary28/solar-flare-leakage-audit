@@ -9,13 +9,13 @@ model,split,TSS,CI95,HSS2
 "3-feat (USFLUX,TOTUSJH,R_VALUE)",inflation random - grouped (paired),-0.0,"[-0.012, 0.014]",
 LR,random rows (leaky),0.724,"[0.690, 0.752]",0.335
 LR,grouped by AR,0.704,"[0.668, 0.733]",0.316
-LR,forward time + AR-disjoint,0.726,"[0.674, 0.769]",0.349
+LR,forward time + AR-disjoint,0.725,"[0.673, 0.767]",0.349
 LR,inflation random - grouped (paired),0.02,"[0.009, 0.031]",
 HGB,random rows (leaky),0.865,"[0.852, 0.877]",0.476
 HGB,grouped by AR,0.663,"[0.628, 0.694]",0.253
 HGB,forward time + AR-disjoint,0.659,"[0.605, 0.700]",0.231
 HGB,inflation random - grouped (paired),0.202,"[0.179, 0.231]",
-MLP,random rows (leaky),0.875,"[0.864, 0.886]",0.544
-MLP,grouped by AR,0.574,"[0.531, 0.609]",0.208
-MLP,forward time + AR-disjoint,0.545,"[0.488, 0.603]",0.215
-MLP,inflation random - grouped (paired),0.302,"[0.270, 0.337]",
+MLP,random rows (leaky),0.874,"[0.863, 0.884]",0.559
+MLP,grouped by AR,0.574,"[0.534, 0.609]",0.205
+MLP,forward time + AR-disjoint,0.552,"[0.499, 0.604]",0.193
+MLP,inflation random - grouped (paired),0.3,"[0.268, 0.335]",

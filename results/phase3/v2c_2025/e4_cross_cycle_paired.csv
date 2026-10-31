@@ -1,6 +1,6 @@
 model,settings,comparison,dTSS,CI95,excludes_zero
-LR,default,cross-cycle minus in-cycle on C25 test (B - C),0.046,"[0.029, 0.063]",True
-LR,default,reverse minus in-cycle on C24 test (D - A),-0.057,"[-0.083, -0.029]",True
+LR,default,cross-cycle minus in-cycle on C25 test (B - C),0.045,"[0.028, 0.063]",True
+LR,default,reverse minus in-cycle on C24 test (D - A),-0.056,"[-0.082, -0.028]",True
 HGB,default,cross-cycle minus in-cycle on C25 test (B - C),0.019,"[0.003, 0.036]",True
 HGB,default,reverse minus in-cycle on C24 test (D - A),-0.044,"[-0.074, -0.014]",True
 LR,tuned,cross-cycle minus in-cycle on C25 test (B - C),0.014,"[0.002, 0.026]",True

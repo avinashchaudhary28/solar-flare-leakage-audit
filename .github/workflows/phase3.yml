@@ -6,7 +6,7 @@ name: Phase 3 (rerun on corrected labels)
 on:
   push:
     branches: [audit-v2]
-    paths: ["phase3/**", "audit/**"]
+    paths: ["phase3/solar_flare_phase3.ipynb", "audit/solar_flare_audit_v2.ipynb"]
   workflow_dispatch:
 
 permissions:

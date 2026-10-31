@@ -23,7 +23,7 @@
    "alpha": 1.0
   }
  },
- "minutes": 25.4,
+ "minutes": 28.6,
  "versions": {
   "python": "3.12.15",
   "sklearn": "1.9.1",
