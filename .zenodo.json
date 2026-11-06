@@ -1,8 +1,29 @@
 {
   "title": "Leakage-Audited Solar Flare Forecasting Across Solar Cycles 24 and 25: code and result tables",
   "upload_type": "software",
-  "description": "Reproducible Colab notebook, result tables and figures for M+ solar flare forecasting (24 h horizon) from SDO/HMI SHARP parameters, comparing random, active-region-grouped and forward-in-time evaluation and transfer between Solar Cycles 24 and 25.",
-  "creators": [{"name": "Kumar, Avinash", "orcid": "0009-0008-7613-1185"}],
+  "description": "Code, GitHub Actions workflows, result tables and figures for M+ solar flare forecasting (24 h horizon) from SDO/HMI SHARP parameters: leakage audit of random, HARP-grouped and forward-in-time evaluation, transfer between Solar Cycles 24 and 25 (to December 2025), and a label audit showing that the SWAN-SF flare list carries the operational 0.7 GOES XRS-B scaling. Version 2 relabels both cycles from the NOAA GOES Flare Report in true flux.",
+  "creators": [
+    {
+      "name": "Kumar, Avinash",
+      "orcid": "0009-0008-7613-1185"
+    }
+  ],
   "license": "MIT",
-  "keywords": ["solar flare forecasting", "data leakage", "SDO/HMI SHARP", "solar cycle 25"]
+  "keywords": [
+    "solar flare forecasting",
+    "data leakage",
+    "SDO/HMI SHARP",
+    "solar cycle 25",
+    "GOES XRS",
+    "SWAN-SF",
+    "space weather"
+  ],
+  "version": "2.0.0",
+  "related_identifiers": [
+    {
+      "identifier": "10.22541/essoar.15010619",
+      "relation": "isSupplementTo",
+      "scheme": "doi"
+    }
+  ]
 }

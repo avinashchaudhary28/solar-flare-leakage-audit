@@ -1,0 +1,119 @@
+name: Phase 3 (rerun on corrected labels)
+
+# 1) rebuild the window tables with all label variants (audit notebook, cached inputs)
+# 2) rerun every experiment once per label, in parallel
+# 3) commit the tables and figures to results/phase3/<label>/ on this branch
+on:
+  push:
+    branches: [audit-v2]
+    paths: ["phase3/solar_flare_phase3.ipynb", "audit/solar_flare_audit_v2.ipynb"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: audit-v2-phase3
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      AUDIT_WORK: ${{ github.workspace }}/work
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -q "pandas>=2.2" "numpy>=1.26" "scikit-learn>=1.5" requests drms netCDF4 xarray pyarrow nbconvert nbclient ipykernel
+      - uses: actions/cache@v4
+        with:
+          path: |
+            work/swan
+            work/pinn_data
+            work/hek_cache
+            work/flrpt
+            work/flsum_g16.nc
+          key: audit-v2-inputs-${{ hashFiles('audit/solar_flare_audit_v2.ipynb') }}
+          restore-keys: audit-v2-inputs-
+      - name: Build window tables (audit notebook)
+        run: |
+          mkdir -p work
+          jupyter nbconvert --to notebook --execute --allow-errors --ExecutePreprocessor.timeout=-1 \
+            --output executed.ipynb audit/solar_flare_audit_v2.ipynb
+          ls -la work/*.pkl
+          test -f work/c25ext_samples_v2.pkl || { echo "2025 table missing - see work/audit_v2_out/errors.txt"; cat work/audit_v2_out/errors.txt; exit 1; }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: samples
+          path: |
+            work/c24_samples_v2.pkl
+            work/c25_samples_v2.pkl
+            work/c25ext_samples_v2.pkl
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: audit_out
+          path: work/audit_v2_out
+
+  run:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {name: v1, label: v1, table: c25_samples_v2.pkl}
+          - {name: v2c, label: v2c, table: c25_samples_v2.pkl}
+          - {name: v2c_2025, label: v2c, table: c25ext_samples_v2.pkl}
+    env:
+      AUDIT_WORK: ${{ github.workspace }}/work
+      LABEL: ${{ matrix.label }}
+      C25_TABLE: ${{ matrix.table }}
+      RUN_NAME: ${{ matrix.name }}
+      PUBLISHED_DIR: ${{ github.workspace }}
+      NBOOT: "1000"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -q "pandas>=2.2" "numpy>=1.26" "scikit-learn>=1.5" matplotlib pyarrow nbconvert nbclient ipykernel && pip freeze > pip-freeze.txt
+      - uses: actions/download-artifact@v4
+        with: {name: samples, path: work}
+      - name: Run Phase 3 notebook
+        run: |
+          jupyter nbconvert --to notebook --execute --ExecutePreprocessor.timeout=-1 \
+            --output executed_${RUN_NAME}.ipynb phase3/solar_flare_phase3.ipynb
+          cp phase3/executed_${RUN_NAME}.ipynb work/phase3_out/${RUN_NAME}/executed_notebook.ipynb
+          cp pip-freeze.txt work/phase3_out/${RUN_NAME}/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase3_${{ matrix.name }}
+          path: work/phase3_out/${{ matrix.name }}
+
+  commit:
+    needs: [build, run]
+    if: always() && needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {pattern: "phase3_*", path: dl}
+      - uses: actions/download-artifact@v4
+        with: {name: audit_out, path: dl_audit}
+      - name: Commit results
+        run: |
+          git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}"
+          mkdir -p results/phase3
+          rm -rf results/phase3/audit_tables; mkdir -p results/phase3/audit_tables; cp -r dl_audit/. results/phase3/audit_tables/
+          for d in dl/phase3_*; do if [ -d "$d" ]; then n="${d#dl/phase3_}"; rm -rf "results/phase3/$n"; cp -r "$d" "results/phase3/$n"; fi; done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/phase3
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "Phase 3 results (run ${{ github.run_number }})"
+          ok=0; for i in 1 2 3; do if git pull --rebase -q && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "push failed"; exit 1; }

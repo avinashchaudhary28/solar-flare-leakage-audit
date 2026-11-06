@@ -1,0 +1,7 @@
+model,version,Brier,BSS_vs_C24_clim,BSS_vs_C25early_clim,ECE,mean_pred,obs_rate
+LR,raw,0.1512,-0.44,-0.44,0.208,0.3199999928474426,0.111
+LR,"Platt, Cycle 24",0.0683,0.35,0.35,0.024,0.08799999952316284,0.111
+LR,"recalibrated, Cycle 25 early",0.0694,0.339,0.339,0.036,0.10499999672174454,0.111
+HGB,raw,0.0864,0.177,0.177,0.058,0.13,0.111
+HGB,"Platt, Cycle 24",0.0804,0.234,0.234,0.053,0.059,0.111
+HGB,"recalibrated, Cycle 25 early",0.0771,0.266,0.266,0.036,0.076,0.111

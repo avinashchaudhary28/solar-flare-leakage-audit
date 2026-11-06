@@ -1,0 +1,33 @@
+table,item,published,rerun,diff
+leakage default,1-feat (USFLUX) | random rows (leaky),0.636,0.636,0.0
+leakage default,1-feat (USFLUX) | grouped by AR,0.629,0.633,0.004
+leakage default,1-feat (USFLUX) | forward time + AR-disjoint,0.647,0.647,0.0
+leakage default,"3-feat (USFLUX,TOTUSJH,R_VALUE) | random rows (leaky)",0.683,0.683,0.0
+leakage default,"3-feat (USFLUX,TOTUSJH,R_VALUE) | grouped by AR",0.678,0.654,-0.024
+leakage default,"3-feat (USFLUX,TOTUSJH,R_VALUE) | forward time + AR-disjoint",0.69,0.69,0.0
+leakage default,LR | random rows (leaky),0.746,0.747,0.001
+leakage default,LR | grouped by AR,0.727,0.718,-0.009
+leakage default,LR | forward time + AR-disjoint,0.72,0.715,-0.005
+leakage default,HGB | random rows (leaky),0.894,0.892,-0.002
+leakage default,HGB | grouped by AR,0.688,0.698,0.01
+leakage default,HGB | forward time + AR-disjoint,0.69,0.699,0.009
+leakage default,MLP | random rows (leaky),0.902,0.895,-0.007
+leakage default,MLP | grouped by AR,0.588,0.602,0.014
+leakage default,MLP | forward time + AR-disjoint,0.595,0.605,0.01
+cross-cycle,LR | A in-cycle C24 (2010-13 -> 2014-15),0.721,0.721,0.0
+cross-cycle,LR | B cross  C24 -> C25 late,0.655,0.656,0.001
+cross-cycle,LR | C in-cycle C25 (2021-22 -> 2023-24),0.644,0.645,0.001
+cross-cycle,LR | D reverse C25 -> C24 late,0.7,0.701,0.001
+cross-cycle,HGB | A in-cycle C24 (2010-13 -> 2014-15),0.7,0.689,-0.011
+cross-cycle,HGB | B cross  C24 -> C25 late,0.606,0.608,0.002
+cross-cycle,HGB | C in-cycle C25 (2021-22 -> 2023-24),0.597,0.549,-0.048
+cross-cycle,HGB | D reverse C25 -> C24 late,0.645,0.619,-0.026
+leakage tuned,LR (tuned) | TSS_random,0.747,0.743,-0.004
+leakage tuned,LR (tuned) | TSS_grouped,0.708,0.726,0.018
+leakage tuned,LR (tuned) | inflation,0.039,0.018,-0.021
+leakage tuned,HGB (tuned) | TSS_random,0.771,0.86,0.089
+leakage tuned,HGB (tuned) | TSS_grouped,0.721,0.703,-0.018
+leakage tuned,HGB (tuned) | inflation,0.05,0.157,0.107
+leakage tuned,MLP (tuned) | TSS_random,0.737,0.737,0.0
+leakage tuned,MLP (tuned) | TSS_grouped,0.718,0.724,0.006
+leakage tuned,MLP (tuned) | inflation,0.019,0.013,-0.006

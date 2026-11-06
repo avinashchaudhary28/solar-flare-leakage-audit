@@ -13,3 +13,16 @@ keywords:
   - data leakage
   - SDO/HMI SHARP
   - solar cycle 25
+  - GOES XRS
+  - SWAN-SF
+version: "2.0.0"
+preferred-citation:
+  type: article
+  title: "Leakage-Audited Solar Flare Forecasting Across Solar Cycles 24 and 25"
+  authors:
+    - family-names: Kumar
+      given-names: Avinash
+      orcid: "https://orcid.org/0009-0008-7613-1185"
+  doi: "10.22541/essoar.15010619"
+  year: 2026
+  notes: "Preprint, ESS Open Archive"

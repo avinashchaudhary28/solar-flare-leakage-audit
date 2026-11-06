@@ -1,0 +1,19 @@
+model,params,grouped_cv_auc,selected,at_grid_edge
+LR,"{""C"": 0.0003}",0.9289,False,False
+LR,"{""C"": 0.001}",0.929,True,False
+LR,"{""C"": 0.003}",0.9284,False,False
+LR,"{""C"": 0.03}",0.9258,False,False
+LR,"{""C"": 0.3}",0.9233,False,False
+HGB,"{""learning_rate"": 0.06, ""max_iter"": 100, ""max_leaf_nodes"": 8, ""min_samples_leaf"": 200, ""l2_regularization"": 1}",0.9269,False,False
+HGB,"{""learning_rate"": 0.06, ""max_iter"": 300, ""max_leaf_nodes"": 8, ""min_samples_leaf"": 200, ""l2_regularization"": 10}",0.9242,False,False
+HGB,"{""learning_rate"": 0.06, ""max_iter"": 100, ""max_leaf_nodes"": 31, ""min_samples_leaf"": 500, ""l2_regularization"": 10}",0.9286,True,False
+HGB,"{""learning_rate"": 0.06, ""max_iter"": 300, ""max_leaf_nodes"": 31, ""min_samples_leaf"": 500, ""l2_regularization"": 10}",0.9268,False,False
+HGB,"{""learning_rate"": 0.06, ""max_iter"": 150, ""max_leaf_nodes"": 15, ""min_samples_leaf"": 100, ""l2_regularization"": 1}",0.9243,False,False
+HGB,"{""learning_rate"": 0.06, ""max_iter"": 150, ""max_leaf_nodes"": 15, ""min_samples_leaf"": 500, ""l2_regularization"": 10}",0.928,False,False
+HGB,"{""learning_rate"": 0.06, ""max_iter"": 300, ""max_leaf_nodes"": 8, ""min_samples_leaf"": 500, ""l2_regularization"": 1}",0.9243,False,False
+HGB,"{""learning_rate"": 0.06, ""max_iter"": 100, ""max_leaf_nodes"": 31, ""min_samples_leaf"": 50, ""l2_regularization"": 1}",0.924,False,False
+MLP,"{""hidden_layer_sizes"": [32], ""alpha"": 0.001}",0.9204,False,False
+MLP,"{""hidden_layer_sizes"": [32], ""alpha"": 0.1}",0.9233,False,False
+MLP,"{""hidden_layer_sizes"": [32], ""alpha"": 1.0}",0.9274,False,False
+MLP,"{""hidden_layer_sizes"": [32], ""alpha"": 10.0}",0.9121,False,False
+MLP,"{""hidden_layer_sizes"": [64, 32], ""alpha"": 1.0}",0.9288,True,True

@@ -1,0 +1,8 @@
+split,test_harps,test_harps_sharing_noaa_with_train,test_windows,test_windows_affected,test_positives_affected
+C24 forward / A,509,0,91709,0,0
+C25 in-cycle / C,490,0,97866,0,0
+C24 grouped fold 1,242,16,43093,2862,63
+C24 grouped fold 2,241,17,43093,2466,65
+C24 grouped fold 3,241,22,43092,4307,497
+C24 grouped fold 4,241,23,43093,4026,232
+C24 grouped fold 5,242,21,43092,4112,185
