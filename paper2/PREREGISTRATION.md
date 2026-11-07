@@ -80,4 +80,16 @@ settings. No tuning in the pilot.
 
 ## Amendments
 
-None yet.
+**Amendment 1 (7 November 2026, after the default-model pilot).** The default-model pilot gave "no clear gain
+from evolution" (`results/paper2/pilot/`). To check that this is not caused by untuned models, the same
+comparisons are repeated with tuned models. Nothing above changes; this is an added robustness run.
+
+- Tuning: for each feature set and each model separately, the paper 1 grids and procedure (E2): Cycle 24
+  2010–2013 windows, every third row, grouped 3-fold CV over HARPs, highest mean ROC AUC wins. LR grid
+  C = 0.0003, 0.001, 0.003, 0.03, 0.3; HGB grid of 8 settings, unchanged from paper 1. E24H is tuned on `ok24`
+  windows only; in the `ok24` comparison EH keeps the settings tuned on all windows.
+- The tuning windows (2010–2013) are also part of the split G test folds. This mild selection effect is the
+  same for every feature set and is reported, not corrected.
+- The same decision rule is applied to the tuned results and reported next to the default verdict. The final
+  statement of paper 2 uses both: "evolution helps" only if both the default and the tuned run say so.
+- Outputs: `p2t_*.csv` and `p2t_run_info.json` in `results/paper2/pilot/`.
