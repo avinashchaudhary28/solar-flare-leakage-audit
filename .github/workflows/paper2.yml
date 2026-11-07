@@ -1,0 +1,70 @@
+name: Paper 2 pilot (evolution beyond size and flare history)
+
+# Pre-registered pilot (paper2/PREREGISTRATION.md):
+# 1) run the paper 1 audit notebook unchanged and add the history / 24-hour-change columns (p2_build.py)
+# 2) run the pre-registered comparisons (p2_pilot.py)
+# 3) commit the tables to results/paper2/pilot/ on this branch
+on:
+  push:
+    branches: [paper2-evolution]
+    paths: ["paper2/*.py", ".github/workflows/paper2.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper2-pilot
+  cancel-in-progress: true
+
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      AUDIT_WORK: ${{ github.workspace }}/work
+      NBOOT: "1000"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -q "pandas>=2.2" "numpy>=1.26" "scikit-learn>=1.5" requests drms netCDF4 xarray pyarrow && pip freeze > pip-freeze.txt
+      - uses: actions/cache@v4
+        with:
+          path: |
+            work/swan
+            work/pinn_data
+            work/hek_cache
+            work/flrpt
+            work/flsum_g16.nc
+          key: paper2-inputs-${{ hashFiles('audit/solar_flare_audit_v2.ipynb') }}
+          restore-keys: |
+            paper2-inputs-
+            audit-v2-inputs-
+      - name: Build tables (paper 1 audit + pre-registered columns)
+        run: mkdir -p work && python paper2/p2_build.py "$GITHUB_WORKSPACE"
+      - name: Pre-registered comparisons
+        run: python paper2/p2_pilot.py
+      - name: Collect outputs
+        if: always()
+        run: |
+          mkdir -p work/p2_out
+          cp pip-freeze.txt work/p2_out/ || true
+          cp -r work/audit_v2_out work/p2_out/audit_v2_out 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paper2_pilot
+          path: work/p2_out
+      - name: Commit results
+        if: success()
+        run: |
+          git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}"
+          rm -rf results/paper2/pilot && mkdir -p results/paper2/pilot && cp -r work/p2_out/. results/paper2/pilot/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/paper2/pilot
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "Paper 2 pilot results (run ${{ github.run_number }})"
+          ok=0; for i in 1 2 3; do if git pull --rebase -q && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "push failed"; exit 1; }
