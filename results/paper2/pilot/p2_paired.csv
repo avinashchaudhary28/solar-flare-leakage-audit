@@ -1,15 +1,15 @@
 comparison,meaning,windows,split,model,dTSS,CI95,above_zero,below_zero
-EH - SH,primary: evolution beyond state and history,all,G,LR,0.005,"[-0.003, 0.014]",False,False
+EH - SH,primary: evolution beyond state and history,all,G,LR,0.0,"[-0.009, 0.010]",False,False
 EH - SH,primary: evolution beyond state and history,all,G,HGB,0.01,"[-0.005, 0.026]",False,False
-EH - SH,primary: evolution beyond state and history,all,A,LR,0.007,"[-0.010, 0.028]",False,False
+EH - SH,primary: evolution beyond state and history,all,A,LR,0.01,"[-0.011, 0.038]",False,False
 EH - SH,primary: evolution beyond state and history,all,A,HGB,0.024,"[-0.001, 0.052]",False,False
-EH - SH,primary: evolution beyond state and history,all,B,LR,-0.02,"[-0.029, -0.010]",False,True
+EH - SH,primary: evolution beyond state and history,all,B,LR,-0.033,"[-0.045, -0.021]",False,True
 EH - SH,primary: evolution beyond state and history,all,B,HGB,0.013,"[0.003, 0.024]",True,False
-SH - B1,full magnetic state beyond size and history,all,G,LR,0.034,"[0.015, 0.054]",True,False
+SH - B1,full magnetic state beyond size and history,all,G,LR,0.037,"[0.019, 0.055]",True,False
 SH - B1,full magnetic state beyond size and history,all,G,HGB,0.033,"[0.005, 0.061]",True,False
-SH - B1,full magnetic state beyond size and history,all,A,LR,0.036,"[-0.014, 0.077]",False,False
+SH - B1,full magnetic state beyond size and history,all,A,LR,0.032,"[-0.018, 0.077]",False,False
 SH - B1,full magnetic state beyond size and history,all,A,HGB,0.023,"[-0.033, 0.074]",False,False
-SH - B1,full magnetic state beyond size and history,all,B,LR,0.086,"[0.066, 0.106]",True,False
+SH - B1,full magnetic state beyond size and history,all,B,LR,0.088,"[0.067, 0.108]",True,False
 SH - B1,full magnetic state beyond size and history,all,B,HGB,0.072,"[0.045, 0.095]",True,False
 B1 - B0,flare history beyond size,all,G,LR,0.07,"[0.047, 0.092]",True,False
 B1 - B0,flare history beyond size,all,G,HGB,0.037,"[0.015, 0.060]",True,False
@@ -17,9 +17,9 @@ B1 - B0,flare history beyond size,all,A,LR,0.03,"[0.008, 0.056]",True,False
 B1 - B0,flare history beyond size,all,A,HGB,-0.011,"[-0.043, 0.027]",False,False
 B1 - B0,flare history beyond size,all,B,LR,0.026,"[0.010, 0.044]",True,False
 B1 - B0,flare history beyond size,all,B,HGB,-0.002,"[-0.020, 0.016]",False,False
-E24H - EH,24-hour change beyond 12-hour evolution (ok24 windows),ok24,G,LR,-0.006,"[-0.013, -0.001]",False,True
+E24H - EH,24-hour change beyond 12-hour evolution (ok24 windows),ok24,G,LR,-0.007,"[-0.014, -0.001]",False,True
 E24H - EH,24-hour change beyond 12-hour evolution (ok24 windows),ok24,G,HGB,0.008,"[-0.003, 0.021]",False,False
-E24H - EH,24-hour change beyond 12-hour evolution (ok24 windows),ok24,A,LR,0.001,"[-0.007, 0.011]",False,False
+E24H - EH,24-hour change beyond 12-hour evolution (ok24 windows),ok24,A,LR,-0.006,"[-0.016, 0.001]",False,False
 E24H - EH,24-hour change beyond 12-hour evolution (ok24 windows),ok24,A,HGB,0.006,"[-0.008, 0.018]",False,False
-E24H - EH,24-hour change beyond 12-hour evolution (ok24 windows),ok24,B,LR,-0.005,"[-0.009, -0.001]",False,True
+E24H - EH,24-hour change beyond 12-hour evolution (ok24 windows),ok24,B,LR,0.001,"[-0.004, 0.005]",False,False
 E24H - EH,24-hour change beyond 12-hour evolution (ok24 windows),ok24,B,HGB,0.015,"[0.006, 0.023]",True,False
