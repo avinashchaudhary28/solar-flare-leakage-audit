@@ -17,6 +17,8 @@ from sklearn.metrics import roc_auc_score
 
 os.chdir(os.environ.get("AUDIT_WORK", "."))
 NB = int(os.environ.get("NBOOT", "1000"))
+TUNED = os.environ.get("TUNED", "0") == "1"      # amendment 1: tuned models
+TAG = "p2t" if TUNED else "p2"
 OUT = "p2_out"; os.makedirs(OUT, exist_ok=True)
 T0 = time.time()
 
@@ -41,9 +43,9 @@ COMPARE = [("EH", "SH", "all", "primary: evolution beyond state and history"),
 print("C24", A.shape, "pos", round(A.y.mean(), 4), "| C25", B.shape, "pos", round(B.y.mean(), 4))
 
 # ---- helpers copied from the paper 1 Phase 3 notebook ----
-def mk(name):
-    if name == "LR": return make_pipeline(StandardScaler(), LogisticRegression(C=0.1, class_weight="balanced", max_iter=300))
-    return HistGradientBoostingClassifier(max_iter=150, learning_rate=0.08, class_weight="balanced", random_state=0)
+def mk(name, **kw):
+    if name == "LR": return make_pipeline(StandardScaler(), LogisticRegression(**{"C": 0.1, "class_weight": "balanced", "max_iter": 300, **kw}))
+    return HistGradientBoostingClassifier(**{"max_iter": 150, "learning_rate": 0.08, "class_weight": "balanced", "random_state": 0, **kw})
 def tss_pt(p, yy, t):
     pr = p >= t; tp = (pr & (yy == 1)).sum(); fn = ((~pr) & (yy == 1)).sum(); fp = (pr & (yy == 0)).sum(); tn = ((~pr) & (yy == 0)).sum()
     return tp / max(tp + fn, 1) - fp / max(fp + tn, 1)
@@ -80,12 +82,33 @@ def split_B(DA, DB):
     te = DB[(DB.time >= "2023-01-15") & (~DB.ar.isin(set(b0.ar)))]
     tr, va = val_split(tr0); return [(tr, va, te)]
 
-def evaluate(folds, feats, model):
+# ---- amendment 1: per-feature-set tuning, same grids and procedure as paper 1 (E2) ----
+GRID = {
+ "LR":  [dict(C=c) for c in (0.0003, 0.001, 0.003, 0.03, 0.3)],
+ "HGB": [dict(learning_rate=0.06, max_iter=i, max_leaf_nodes=l, min_samples_leaf=s, l2_regularization=r) for i, l, s, r in
+         [(100, 8, 200, 1), (300, 8, 200, 10), (100, 31, 500, 10), (300, 31, 500, 10), (150, 15, 100, 1), (150, 15, 500, 10), (300, 8, 500, 1), (100, 31, 50, 1)]]}
+KW = {}
+if TUNED:
+    rows = []; tr_all = A[A.time < "2014-01-01"].reset_index(drop=True)
+    for fs, feats in SETS.items():
+        tune = (tr_all[tr_all.ok24 == 1] if fs == "E24H" else tr_all).iloc[::3]
+        g = pd.factorize(tune.ar)[0]; Xt, yt = tune[feats].values, tune.y.values
+        for model, grid in GRID.items():
+            aucs = [np.mean([roc_auc_score(yt[v], mk(model, **kw).fit(Xt[a], yt[a]).predict_proba(Xt[v])[:, 1])
+                             for a, v in GroupKFold(3).split(Xt, yt, g)]) for kw in grid]
+            i = int(np.argmax(aucs)); KW[(model, fs)] = grid[i]
+            for j, kw in enumerate(grid):
+                rows.append(dict(features=fs, model=model, params=json.dumps(kw), grouped_cv_auc=round(aucs[j], 4),
+                                 selected=j == i, at_grid_edge=(j == i) and j in (0, len(grid) - 1)))
+        print("tuned", fs, round((time.time() - T0) / 60, 1), "min", flush=True)
+    save(pd.DataFrame(rows), "p2t_tuning_grid")
+
+def evaluate(folds, feats, model, kw={}):
     """Pooled per-region counts and test predictions over the folds."""
     te_all = pd.concat([f[2] for f in folds]); codes, uars = pd.factorize(te_all.ar)
     C = np.zeros((len(uars), 4)); ps, ys = [], []; pos = 0
     for tr, va, te in folds:
-        m = mk(model).fit(tr[feats].values, tr.y.values)
+        m = mk(model, **kw).fit(tr[feats].values, tr.y.values)
         t = best_t(m.predict_proba(va[feats].values)[:, 1], va.y.values)
         p = m.predict_proba(te[feats].values)[:, 1]
         C += counts(p, te.y.values, codes[pos:pos + len(te)], len(uars), t); pos += len(te); ps.append(p); ys.append(te.y.values)
@@ -100,12 +123,12 @@ for subset in ["all", "ok24"]:
         te = pd.concat([f[2] for f in folds])
         for model in ["LR", "HGB"]:
             for fs in names:
-                C, auc = evaluate(folds, SETS[fs], model); CN[(subset, sn, model, fs)] = C
+                C, auc = evaluate(folds, SETS[fs], model, KW.get((model, fs), {})); CN[(subset, sn, model, fs)] = C
                 res.append(dict(windows=subset, split=sn, model=model, features=fs, n_features=len(SETS[fs]), n_test=len(te),
                                 test_regions=te.ar.nunique(), test_pos_rate=round(te.y.mean(), 4),
                                 TSS=round(tss_c(C), 3), CI95=ci(boot(C)), AUC=round(auc, 3)))
             print(subset, sn, model, "done", round((time.time() - T0) / 60, 1), "min", flush=True)
-r = save(pd.DataFrame(res), "p2_skill")
+r = save(pd.DataFrame(res), TAG + "_skill")
 
 for a_, b_, subset, what in COMPARE:
     for sn in ["G", "A", "B"]:
@@ -114,12 +137,12 @@ for a_, b_, subset, what in COMPARE:
             lo, hi = np.percentile(bd, 2.5), np.percentile(bd, 97.5)
             prs.append(dict(comparison=f"{a_} - {b_}", meaning=what, windows=subset, split=sn, model=model,
                             dTSS=round(d, 3), CI95=ci(bd), above_zero=bool(lo > 0), below_zero=bool(hi < 0)))
-pp = save(pd.DataFrame(prs), "p2_paired")
+pp = save(pd.DataFrame(prs), TAG + "_paired")
 
 prim = pp[(pp.comparison == "EH - SH") & pp.split.isin(["G", "B"])]
 verdict = "evolution helps" if bool(prim.above_zero.all()) else "no clear gain from evolution"
-info = {"verdict_preregistered_rule": verdict, "rule": "EH - SH interval above zero for LR and HGB on splits G and B",
+info = {"models": "tuned (amendment 1)" if TUNED else "default", "verdict_preregistered_rule": verdict, "rule": "EH - SH interval above zero for LR and HGB on splits G and B",
         "n_boot": NB, "python": platform.python_version(), "sklearn": sklearn.__version__, "pandas": pd.__version__,
         "numpy": np.__version__, "minutes": round((time.time() - T0) / 60, 1)}
-json.dump(info, open(f"{OUT}/run_info.json", "w"), indent=1)
+json.dump(info, open(f"{OUT}/{TAG}_run_info.json", "w"), indent=1)
 print("\nPRE-REGISTERED VERDICT:", verdict)

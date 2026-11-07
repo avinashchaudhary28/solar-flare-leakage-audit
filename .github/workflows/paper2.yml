@@ -43,8 +43,11 @@ jobs:
             audit-v2-inputs-
       - name: Build tables (paper 1 audit + pre-registered columns)
         run: mkdir -p work && python paper2/p2_build.py "$GITHUB_WORKSPACE"
-      - name: Pre-registered comparisons
+      - name: Pre-registered comparisons (default models)
         run: python paper2/p2_pilot.py
+      - name: Pre-registered comparisons (tuned models, amendment 1)
+        run: python paper2/p2_pilot.py
+        env: {TUNED: "1"}
       - name: Collect outputs
         if: always()
         run: |
