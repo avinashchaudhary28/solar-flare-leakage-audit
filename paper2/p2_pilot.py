@@ -19,6 +19,9 @@ os.chdir(os.environ.get("AUDIT_WORK", "."))
 NB = int(os.environ.get("NBOOT", "1000"))
 TUNED = os.environ.get("TUNED", "0") == "1"      # amendment 1: tuned models
 TAG = "p2t" if TUNED else "p2"
+A2 = os.environ.get("A2", "0") == "1"            # amendment 2: converged LR, HGB grid extended downwards
+LR_ITER = 5000 if A2 else 300
+NOCONV = [0]
 OUT = "p2_out"; os.makedirs(OUT, exist_ok=True)
 T0 = time.time()
 
@@ -44,7 +47,7 @@ print("C24", A.shape, "pos", round(A.y.mean(), 4), "| C25", B.shape, "pos", roun
 
 # ---- helpers copied from the paper 1 Phase 3 notebook ----
 def mk(name, **kw):
-    if name == "LR": return make_pipeline(StandardScaler(), LogisticRegression(**{"C": 0.1, "class_weight": "balanced", "max_iter": 300, **kw}))
+    if name == "LR": return make_pipeline(StandardScaler(), LogisticRegression(**{"C": 0.1, "class_weight": "balanced", "max_iter": LR_ITER, **kw}))
     return HistGradientBoostingClassifier(**{"max_iter": 150, "learning_rate": 0.08, "class_weight": "balanced", "random_state": 0, **kw})
 def tss_pt(p, yy, t):
     pr = p >= t; tp = (pr & (yy == 1)).sum(); fn = ((~pr) & (yy == 1)).sum(); fp = (pr & (yy == 0)).sum(); tn = ((~pr) & (yy == 0)).sum()
@@ -86,7 +89,8 @@ def split_B(DA, DB):
 GRID = {
  "LR":  [dict(C=c) for c in (0.0003, 0.001, 0.003, 0.03, 0.3)],
  "HGB": [dict(learning_rate=0.06, max_iter=i, max_leaf_nodes=l, min_samples_leaf=s, l2_regularization=r) for i, l, s, r in
-         [(100, 8, 200, 1), (300, 8, 200, 10), (100, 31, 500, 10), (300, 31, 500, 10), (150, 15, 100, 1), (150, 15, 500, 10), (300, 8, 500, 1), (100, 31, 50, 1)]]}
+         [(100, 8, 200, 1), (300, 8, 200, 10), (100, 31, 500, 10), (300, 31, 500, 10), (150, 15, 100, 1), (150, 15, 500, 10), (300, 8, 500, 1), (100, 31, 50, 1)]
+         + ([(100, 4, 200, 1), (50, 8, 200, 1), (50, 4, 500, 10)] if A2 else [])]}
 KW = {}
 if TUNED:
     rows = []; tr_all = A[A.time < "2014-01-01"].reset_index(drop=True)
@@ -109,6 +113,7 @@ def evaluate(folds, feats, model, kw={}):
     C = np.zeros((len(uars), 4)); ps, ys = [], []; pos = 0
     for tr, va, te in folds:
         m = mk(model, **kw).fit(tr[feats].values, tr.y.values)
+        if model == "LR" and m[-1].n_iter_[0] >= LR_ITER: NOCONV[0] += 1
         t = best_t(m.predict_proba(va[feats].values)[:, 1], va.y.values)
         p = m.predict_proba(te[feats].values)[:, 1]
         C += counts(p, te.y.values, codes[pos:pos + len(te)], len(uars), t); pos += len(te); ps.append(p); ys.append(te.y.values)
@@ -126,7 +131,7 @@ for subset in ["all", "ok24"]:
                 C, auc = evaluate(folds, SETS[fs], model, KW.get((model, fs), {})); CN[(subset, sn, model, fs)] = C
                 res.append(dict(windows=subset, split=sn, model=model, features=fs, n_features=len(SETS[fs]), n_test=len(te),
                                 test_regions=te.ar.nunique(), test_pos_rate=round(te.y.mean(), 4),
-                                TSS=round(tss_c(C), 3), CI95=ci(boot(C)), AUC=round(auc, 3)))
+                                TSS=round(tss_c(C), 3), CI95=ci(boot(C)), AUC=round(auc, 3), lr_fits_not_converged_so_far=NOCONV[0]))
             print(subset, sn, model, "done", round((time.time() - T0) / 60, 1), "min", flush=True)
 r = save(pd.DataFrame(res), TAG + "_skill")
 
@@ -141,7 +146,8 @@ pp = save(pd.DataFrame(prs), TAG + "_paired")
 
 prim = pp[(pp.comparison == "EH - SH") & pp.split.isin(["G", "B"])]
 verdict = "evolution helps" if bool(prim.above_zero.all()) else "no clear gain from evolution"
-info = {"models": "tuned (amendment 1)" if TUNED else "default", "verdict_preregistered_rule": verdict, "rule": "EH - SH interval above zero for LR and HGB on splits G and B",
+info = {"models": "tuned (amendment 1)" if TUNED else "default", "amendment_2": A2, "lr_max_iter": LR_ITER,
+        "lr_fits_not_converged": NOCONV[0], "verdict_preregistered_rule": verdict, "rule": "EH - SH interval above zero for LR and HGB on splits G and B",
         "n_boot": NB, "python": platform.python_version(), "sklearn": sklearn.__version__, "pandas": pd.__version__,
         "numpy": np.__version__, "minutes": round((time.time() - T0) / 60, 1)}
 json.dump(info, open(f"{OUT}/{TAG}_run_info.json", "w"), indent=1)

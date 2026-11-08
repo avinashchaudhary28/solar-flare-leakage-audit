@@ -24,6 +24,8 @@ jobs:
     env:
       AUDIT_WORK: ${{ github.workspace }}/work
       NBOOT: "1000"
+      A2: "1"
+      RESULTS_DIR: results/paper2/pilot_a2
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -63,10 +65,10 @@ jobs:
         if: success()
         run: |
           git fetch -q origin "${GITHUB_REF_NAME}" && git reset -q --hard "origin/${GITHUB_REF_NAME}"
-          rm -rf results/paper2/pilot && mkdir -p results/paper2/pilot && cp -r work/p2_out/. results/paper2/pilot/
+          rm -rf "$RESULTS_DIR" && mkdir -p "$RESULTS_DIR" && cp -r work/p2_out/. "$RESULTS_DIR"/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add results/paper2/pilot
+          git add "$RESULTS_DIR"
           git diff --cached --quiet && echo "no changes" && exit 0
           git commit -m "Paper 2 pilot results (run ${{ github.run_number }})"
           ok=0; for i in 1 2 3; do if git pull --rebase -q && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
