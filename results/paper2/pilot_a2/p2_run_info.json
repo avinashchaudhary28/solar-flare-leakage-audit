@@ -1,0 +1,14 @@
+{
+ "models": "default",
+ "amendment_2": true,
+ "lr_max_iter": 5000,
+ "lr_fits_not_converged": 0,
+ "verdict_preregistered_rule": "no clear gain from evolution",
+ "rule": "EH - SH interval above zero for LR and HGB on splits G and B",
+ "n_boot": 1000,
+ "python": "3.12.16",
+ "sklearn": "1.9.1",
+ "pandas": "3.1.1",
+ "numpy": "2.5.4",
+ "minutes": 10.1
+}
