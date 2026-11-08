@@ -93,3 +93,21 @@ comparisons are repeated with tuned models. Nothing above changes; this is an ad
 - The same decision rule is applied to the tuned results and reported next to the default verdict. The final
   statement of paper 2 uses both: "evolution helps" only if both the default and the tuned run say so.
 - Outputs: `p2t_*.csv` and `p2t_run_info.json` in `results/paper2/pilot/`.
+
+**Amendment 2 (8 November 2026, after the tuned run).** Two numerical problems were found; the questions,
+comparisons and decision rule do not change.
+
+1. *Logistic regression did not always converge.* Rerunning the default pilot on another runner changed some
+   multi-feature LR results by up to 0.012 TSS (for example EH on split B: 0.655, then 0.643), while every HGB
+   and one-feature LR result was identical. This points to the LR solver stopping at its 300-iteration limit.
+   From now on LR uses `max_iter = 5000` (the regularisation C is unchanged), and the number of LR fits that
+   still reach the limit is recorded.
+2. *The HGB grid edge.* In amendment 1 the selected HGB setting was the smallest one for most feature sets
+   (`at_grid_edge = True`). Three smaller settings are added to the HGB grid: (iterations, leaves, minimum leaf
+   size, L2) = (100, 4, 200, 1), (50, 8, 200, 1), (50, 4, 500, 10).
+
+Both the default and the tuned comparisons are run again with these changes. Results go to
+`results/paper2/pilot_a2/`; the earlier results stay in `results/paper2/pilot/` and in the git history.
+The paper reports the amendment 2 results as the main ones and the earlier runs as a check. HGB default results
+must be identical to the earlier runs, since nothing about them changed.
+
